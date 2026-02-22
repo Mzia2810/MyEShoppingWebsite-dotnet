@@ -23,6 +23,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
             btnLogout.Visible = false;
         }
     }
+    
 
     private void BindCartNumber()
     {
