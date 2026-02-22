@@ -5,36 +5,31 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
+  solution: 'Mywebapp.sln'
+  buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
 
-- task: UseDotNet@2
-  displayName: 'Install .NET 8 SDK'
-  inputs:
-    packageType: 'sdk'
-    version: '8.0.x'
+- task: NuGetToolInstaller@1
 
-- task: DotNetCoreCLI@2
+- task: NuGetCommand@2
   displayName: 'Restore NuGet Packages'
   inputs:
-    command: 'restore'
-    projects: 'Mywebapp.csproj'
+    restoreSolution: '$(solution)'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Build Project'
+- task: VSBuild@1
+  displayName: 'Build Solution'
   inputs:
-    command: 'build'
-    projects: 'Mywebapp.csproj'
-    arguments: '--configuration $(buildConfiguration)'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Publish Project'
-  inputs:
-    command: 'publish'
-    projects: 'Mywebapp.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-    zipAfterPublish: true
+    solution: '$(solution)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+    msbuildArgs: >
+      /p:DeployOnBuild=true
+      /p:WebPublishMethod=Package
+      /p:PackageAsSingleFile=true
+      /p:SkipInvalidConfigurations=true
+      /p:PackageLocation="$(Build.ArtifactStagingDirectory)"
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifacts'
