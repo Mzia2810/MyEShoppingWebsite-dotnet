@@ -32,14 +32,15 @@ steps:
       /p:SkipInvalidConfigurations=true
       /p:PackageLocation="$(Build.ArtifactStagingDirectory)\WebApp_$(Build.BuildNumber).zip"
 
-# Verify artifact exists (optional but recommended)
+# Verify artifact exists
 - powershell: |
     Write-Host "Listing artifact directory contents:"
     Get-ChildItem "$(Build.ArtifactStagingDirectory)"
   displayName: 'Verify Artifact Contents'
 
-# Publish Artifact
-- task: PublishPipelineArtifact@1
+# Publish Build Artifact (downloadable from pipeline)
+- task: PublishBuildArtifacts@1
   inputs:
-    targetPath: '$(Build.ArtifactStagingDirectory)'
-    artifact: 'drop'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
