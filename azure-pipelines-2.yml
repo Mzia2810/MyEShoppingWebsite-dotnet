@@ -11,12 +11,15 @@ variables:
 
 steps:
 
+# Install NuGet
 - task: NuGetToolInstaller@1
 
+# Restore NuGet packages
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
 
+# Build & Create Web Deploy Package
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
@@ -27,12 +30,16 @@ steps:
       /p:WebPublishMethod=Package
       /p:PackageAsSingleFile=true
       /p:SkipInvalidConfigurations=true
-      /p:PackageLocation="$(Build.ArtifactStagingDirectory)\WebApp.zip"
+      /p:PackageLocation="$(Build.ArtifactStagingDirectory)\WebApp_$(Build.BuildNumber).zip"
 
+# Verify artifact exists (optional but recommended)
+- powershell: |
+    Write-Host "Listing artifact directory contents:"
+    Get-ChildItem "$(Build.ArtifactStagingDirectory)"
+  displayName: 'Verify Artifact Contents'
 
-- task: PublishBuildArtifacts@1
+# Publish Artifact
+- task: PublishPipelineArtifact@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: '$(Parameters.ArtifactName)'
-    publishLocation: 'Container'
-  condition: succeededOrFailed()
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    artifact: 'drop'
