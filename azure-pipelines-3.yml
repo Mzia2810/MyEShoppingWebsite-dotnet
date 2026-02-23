@@ -1,0 +1,27 @@
+trigger:
+- main
+
+pool:
+  name: Default
+  demands:
+    - agent.os -equals Darwin
+
+variables:
+  solution: '**/*.sln'
+  configuration: 'Release'
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '10.x'
+    includePreviewVersions: true
+
+- script: dotnet restore $(solution)
+  displayName: 'Restore NuGet packages'
+
+- script: dotnet build $(solution) --configuration $(configuration)
+  displayName: 'Build solution'
+
+- script: dotnet test $(solution) --configuration $(configuration)
+  displayName: 'Run tests'
