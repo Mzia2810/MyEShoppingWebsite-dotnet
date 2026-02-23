@@ -2,12 +2,12 @@ trigger:
 - main
 
 pool:
-  name: Default      # your Mac M3 agent pool
+  name: Default   # your Mac M3 agent pool
   demands:
     - agent.os -equals Darwin
 
 variables:
-  solution: '**/Mywebapp.sln'
+  solution: '**/MywebappCore.sln'
   configuration: 'Release'
 
 steps:
@@ -15,7 +15,6 @@ steps:
   inputs:
     packageType: 'sdk'
     version: '10.x'
-    includePreviewVersions: true
 
 - script: dotnet restore $(solution)
   displayName: 'Restore NuGet packages'
