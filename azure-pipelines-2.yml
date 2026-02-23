@@ -29,9 +29,6 @@ steps:
       /p:SkipInvalidConfigurations=true
       /p:PackageLocation="$(Build.ArtifactStagingDirectory)\WebApp.zip"
 
-# Optional: Verify files exist
-- script: dir "$(Build.ArtifactStagingDirectory)"
-  displayName: 'Verify Artifact Contents'
 
 - task: PublishBuildArtifacts@1
   inputs:
